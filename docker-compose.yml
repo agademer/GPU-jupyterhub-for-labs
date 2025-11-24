@@ -32,14 +32,16 @@ services:
       - "${HOST_PERSONAL_NETWORK_FOLDER}:${DOCKER_PERSONAL_NETWORK_FOLDER}" ### needed for pre spawn hook
       - "${HOST_SHARED_NETWORK_FOLDER}:${DOCKER_SHARED_NETWORK_FOLDER}" ### not really needed
     ports:
-      - "8000:8000"
+      - "8889:8000"
     environment:
       # This username will be a JupyterHub admin
       JUPYTERHUB_ADMIN: admin
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: quay.io/jupyter/pytorch-notebook:cuda12-notebook-7.2.2
+      #DOCKER_NOTEBOOK_IMAGE: quay.io/jupyter/pytorch-notebook:cuda12-notebook-7.5.0
+      DOCKER_NOTEBOOK_IMAGE: custom-kernel
+
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: /home/jovyan/work
       # Enable NVIDIA GPU support

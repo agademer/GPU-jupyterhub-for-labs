@@ -1,0 +1,3 @@
+THE CONTENT OF THE ~/work directory will be destroy when you leave.
+
+Please use ~/work/personal if you need to save your work.

@@ -1,0 +1,10 @@
+numpy
+matplotlib
+scipy
+ipykernel
+ipython
+torch
+torchvision
+fiftyone
+ultralytics
+jupyter-server-proxy

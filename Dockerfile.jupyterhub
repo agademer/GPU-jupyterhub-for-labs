@@ -8,7 +8,8 @@ RUN python3 -m pip install --no-cache-dir \
     psycopg2-binary \
     dockerspawner \
     jupyterhub-nativeauthenticator \
-    docker
+    docker \
+    jupyter-server-proxy
 
 # Copy TLS certificate and key
 # ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt

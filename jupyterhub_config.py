@@ -7,6 +7,7 @@
 # configuration parameter.
 import os
 import docker
+import shutil
 
 c = get_config()
 
@@ -32,14 +33,25 @@ c.DockerSpawner.network_name = network_name
 notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan/work"
 c.DockerSpawner.notebook_dir = notebook_dir
 
+def create_dir_hook(spawner):
+    username = spawner.user.name # get the username 
+    volume_path = os.path.join(os.environ.get("DOCKER_PERSONAL_NETWORK_FOLDER"), username) #path on the jupytherhub host, create a folder based on username if not exists
+    if not os.path.exists(volume_path):
+        os.mkdir(volume_path)
+        shutil.chown(volume_path, user=1000, group=1025)
+
+
+c.Spawner.pre_spawn_hook = create_dir_hook
+
+
 # Mount the real user"s Docker volume on the host to the notebook user"s
 # notebook directory in the container
 c.DockerSpawner.volumes = {
-    "jupyterhub-user-{username}": notebook_dir,
+    #"jupyterhub-user-{username}": notebook_dir,
     # Personal network folder config (e.g. per user)
-    os.environ.get("HOST_PERSONAL_NETWORK_FOLDER")+"{username}":  os.environ.get("DOCKER_PERSONAL_NETWORK_FOLDER"),
+    os.environ.get("HOST_PERSONAL_NETWORK_FOLDER")+"/{username}":  os.environ.get("DOCKER_PERSONAL_NETWORK_FOLDER"),
     # Shared network folder config (e.g. for all users)
-    os.environ.get("HOST_SHARED_NETWORK_FOLDER"): os.environ.get("DOCKER_SHARED_NETWORK_FOLDER")
+    os.environ.get("HOST_SHARED_NETWORK_FOLDER"): { "bind":os.environ.get("DOCKER_SHARED_NETWORK_FOLDER"),"mode":"ro"}
 }
 
 # Set the spawned container config
@@ -67,10 +79,11 @@ c.DockerSpawner.debug = True
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
-# c.JupyterHub.ip = "0.0.0.0"
-# #c.JupyterHub.proxy_api_ip = "0.0.0.0"
+c.JupyterHub.redirect_to_server = False
+c.JupyterHub.ip = "0.0.0.0"
+c.JupyterHub.proxy_api_ip = "0.0.0.0"
 # c.ConfigurableHTTPProxy.api_url = f"http://0.0.0.0:8081"
-# c.DockerSpawner.hub_ip_connect = "jupyterhub"
+c.DockerSpawner.hub_ip_connect = "jupyterhub"
 
 ##################################
 # HUB DATA STORAGE CONFIGURATION
